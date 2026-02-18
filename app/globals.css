@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+    --background: #fffbfc;
+    --foreground: #ededed;
+    --font_color: #ffffff;
+  }
+
+@theme
+{
+  --spacing: 0.23rem;
+  --color-cream-white: #edf9ff;
+  --color-highlight-this: #ff0080;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  color: var(--font_color);
+  padding: 1rem;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
