@@ -47,7 +47,7 @@ export default function GsuLocationHover() {
     clearHideTimer();
     hideTimer.current = window.setTimeout(() => {
       setOpen(false);
-    }, 80);
+    }, 40);
   };
 
   useEffect(() => {
@@ -80,15 +80,15 @@ export default function GsuLocationHover() {
       href="https://www.gsu.edu"
       target="_blank"
       rel="noreferrer"
-      className="inline-flex items-baseline underline decoration-black/40 underline-offset-2 transition-colors duration-200 ease-in-out hover:decoration-black"
+      className="inline-flex items-baseline no-underline"
       onMouseEnter={show}
       onMouseLeave={hide}
     >
       <span className="inline-flex items-center gap-[0.18em]">
-        GaState, Atlanta, GA
+        GaState, atlanta, GA
         <MapPin
           aria-hidden
-          className={`size-[0.95em] translate-y-[-0.05em] transition-colors duration-200 ease-in-out ${
+          className={`size-[0.95em] translate-y-[-0.05em] transition-colors duration-100 ease-out ${
             open ? "text-black" : "text-muted-foreground"
           }`}
           strokeWidth={1.75}
@@ -106,11 +106,12 @@ export default function GsuLocationHover() {
                 position: "fixed",
                 top: coords.top,
                 left: coords.left,
+                transform: "translateX(-50%)",
                 zIndex: 9999,
               }}
-              className="w-[min(17.5rem,calc(100vw-2.5rem))] origin-top -translate-x-1/2 animate-[gsu-card-in_200ms_ease-in-out]"
+              className="w-[min(17.5rem,calc(100vw-2.5rem))]"
             >
-              <div className="overflow-hidden rounded-xl border border-black/15 bg-white">
+              <div className="animate-[gsu-card-in_100ms_ease-out] overflow-hidden rounded-xl border border-black/15 bg-white shadow-[0_6px_18px_rgba(0,0,0,0.10)]">
                 <div className="h-[8.5rem] w-full overflow-hidden bg-[#e8e8e8]">
                   {shouldLoadMap ? (
                     <iframe

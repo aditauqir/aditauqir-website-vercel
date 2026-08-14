@@ -236,7 +236,7 @@ export default function HomePage() {
 
                 <p>
                   i&apos;m a computer science student pursuing B.S./M.S. at{" "}
-                  <GsuLocationHover />.
+                  <GsuLocationHover />
                 </p>
                 <p>
                   i like building things that feel useful, sharp, and a little
