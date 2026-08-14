@@ -44,9 +44,11 @@ export default function GsuLocationHover() {
         href="https://www.gsu.edu"
         target="_blank"
         rel="noreferrer"
-        className="inline-flex items-center gap-[0.18em] text-inherit underline decoration-black/50 underline-offset-[0.18em]"
+        className="inline-flex items-center gap-[0.18em] text-inherit no-underline"
       >
-        GaState, atlanta, GA
+        <span className="underline decoration-black underline-offset-[0.18em]">
+          GaState, atlanta, GA
+        </span>
         <MapPin
           aria-hidden
           className={`size-[0.95em] translate-y-[-0.05em] transition-colors duration-150 ease-in-out ${
@@ -77,12 +79,12 @@ export default function GsuLocationHover() {
               "opacity 180ms ease-in-out, transform 180ms ease-in-out",
           }}
         >
-          <span className="block h-[8.5rem] w-full overflow-hidden bg-[#e8e8e8]">
+          <span className="relative block h-[8.5rem] w-full overflow-hidden bg-[#e8e8e8]">
             {shouldLoadMap ? (
               <iframe
                 title="Georgia State University map"
                 src={GSU_MAP_EMBED}
-                className="pointer-events-none h-[calc(100%+2rem)] w-full border-0 grayscale-[0.15]"
+                className="pointer-events-none absolute -top-1 -left-11 h-[calc(100%+3rem)] w-[calc(100%+2.75rem)] max-w-none border-0 grayscale-[0.15]"
                 loading="lazy"
                 tabIndex={-1}
                 referrerPolicy="no-referrer-when-downgrade"
