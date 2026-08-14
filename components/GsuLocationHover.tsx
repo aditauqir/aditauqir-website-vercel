@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 
 const GSU_MAP_EMBED =
@@ -13,8 +12,6 @@ const GSU_GOOGLE_MAPS_URL =
 export default function GsuLocationHover() {
   const [open, setOpen] = useState(false);
   const [shouldLoadMap, setShouldLoadMap] = useState(false);
-  const [coords, setCoords] = useState({ top: 0, left: 0 });
-  const triggerRef = useRef<HTMLAnchorElement>(null);
   const hideTimer = useRef<number | null>(null);
 
   const clearHideTimer = () => {
@@ -24,21 +21,8 @@ export default function GsuLocationHover() {
     }
   };
 
-  const updatePosition = () => {
-    const rect = triggerRef.current?.getBoundingClientRect();
-    if (!rect) {
-      return;
-    }
-
-    setCoords({
-      top: rect.bottom + 8,
-      left: rect.left + rect.width / 2,
-    });
-  };
-
   const show = () => {
     clearHideTimer();
-    updatePosition();
     setShouldLoadMap(true);
     setOpen(true);
   };
@@ -50,41 +34,18 @@ export default function GsuLocationHover() {
     }, 40);
   };
 
-  useEffect(() => {
-    return () => {
-      clearHideTimer();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    const onScrollOrResize = () => {
-      updatePosition();
-    };
-
-    window.addEventListener("scroll", onScrollOrResize, true);
-    window.addEventListener("resize", onScrollOrResize);
-
-    return () => {
-      window.removeEventListener("scroll", onScrollOrResize, true);
-      window.removeEventListener("resize", onScrollOrResize);
-    };
-  }, [open]);
-
   return (
-    <a
-      ref={triggerRef}
-      href="https://www.gsu.edu"
-      target="_blank"
-      rel="noreferrer"
-      className="inline-flex items-baseline no-underline"
+    <span
+      className="relative z-[100] inline-flex items-baseline"
       onMouseEnter={show}
       onMouseLeave={hide}
     >
-      <span className="inline-flex items-center gap-[0.18em]">
+      <a
+        href="https://www.gsu.edu"
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-[0.18em] text-inherit underline decoration-black/50 underline-offset-[0.18em]"
+      >
         GaState, atlanta, GA
         <MapPin
           aria-hidden
@@ -93,66 +54,54 @@ export default function GsuLocationHover() {
           }`}
           strokeWidth={1.75}
         />
-      </span>
+      </a>
 
-      {open
-        ? createPortal(
-            <div
-              role="tooltip"
-              aria-label="Georgia State University location"
-              onMouseEnter={show}
-              onMouseLeave={hide}
-              style={{
-                position: "fixed",
-                top: coords.top,
-                left: coords.left,
-                transform: "translateX(-50%)",
-                zIndex: 9999,
-              }}
-              className="w-[min(17.5rem,calc(100vw-2.5rem))]"
-            >
-              <div className="animate-[gsu-card-in_100ms_ease-out] overflow-hidden rounded-xl border border-black/15 bg-white shadow-[0_6px_18px_rgba(0,0,0,0.10)]">
-                <div className="h-[8.5rem] w-full overflow-hidden bg-[#e8e8e8]">
-                  {shouldLoadMap ? (
-                    <iframe
-                      title="Georgia State University map"
-                      src={GSU_MAP_EMBED}
-                      className="pointer-events-none h-[calc(100%+2rem)] w-full border-0 grayscale-[0.15]"
-                      loading="lazy"
-                      tabIndex={-1}
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
-                  ) : null}
-                </div>
+      {open ? (
+        <span
+          role="tooltip"
+          aria-label="Georgia State University location"
+          className="absolute top-full left-1/2 z-[100] w-[min(17.5rem,calc(100vw-2.5rem))] -translate-x-1/2 pt-2"
+        >
+          <span className="block animate-[gsu-card-in_80ms_ease-out] overflow-hidden rounded-xl border border-black/15 bg-white shadow-[0_6px_18px_rgba(0,0,0,0.10)]">
+            <span className="block h-[8.5rem] w-full overflow-hidden bg-[#e8e8e8]">
+              {shouldLoadMap ? (
+                <iframe
+                  title="Georgia State University map"
+                  src={GSU_MAP_EMBED}
+                  className="pointer-events-none h-[calc(100%+2rem)] w-full border-0 grayscale-[0.15]"
+                  loading="lazy"
+                  tabIndex={-1}
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              ) : null}
+            </span>
 
-                <div className="space-y-1 border-t border-black/10 px-3 py-2.5">
-                  <p className="flex items-start gap-1.5 text-[0.78rem] leading-[1.35] font-medium tracking-[-0.05em] text-black">
-                    <MapPin
-                      aria-hidden
-                      className="mt-[0.15em] size-3 shrink-0"
-                      strokeWidth={1.8}
-                    />
-                    Georgia State University
-                  </p>
-                  <p className="pl-[1.15rem] text-[0.7rem] leading-[1.4] tracking-[-0.04em] text-muted-foreground">
-                    Downtown Atlanta Campus
-                    <br />
-                    33 Gilmer St SE, Atlanta, GA 30303
-                  </p>
-                  <a
-                    href={GSU_GOOGLE_MAPS_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-block pl-[1.15rem] pt-1 text-[0.68rem] tracking-[-0.04em] text-black underline underline-offset-2"
-                  >
-                    Open in Google Maps
-                  </a>
-                </div>
-              </div>
-            </div>,
-            document.body,
-          )
-        : null}
-    </a>
+            <span className="block space-y-1 border-t border-black/10 px-3 py-2.5">
+              <span className="flex items-start gap-1.5 text-[0.78rem] leading-[1.35] font-medium tracking-[-0.05em] text-black">
+                <MapPin
+                  aria-hidden
+                  className="mt-[0.15em] size-3 shrink-0"
+                  strokeWidth={1.8}
+                />
+                Georgia State University
+              </span>
+              <span className="block pl-[1.15rem] text-[0.7rem] leading-[1.4] tracking-[-0.04em] text-muted-foreground">
+                Downtown Atlanta Campus
+                <br />
+                33 Gilmer St SE, Atlanta, GA 30303
+              </span>
+              <a
+                href={GSU_GOOGLE_MAPS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-block pl-[1.15rem] pt-1 text-[0.68rem] tracking-[-0.04em] text-black underline underline-offset-2"
+              >
+                Open in Google Maps
+              </a>
+            </span>
+          </span>
+        </span>
+      ) : null}
+    </span>
   );
 }

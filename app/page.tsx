@@ -234,7 +234,7 @@ export default function HomePage() {
                   </HoverBorderGradient>
                 </div>
 
-                <p>
+                <p className="relative z-[100]">
                   i&apos;m a computer science student pursuing B.S./M.S. at{" "}
                   <GsuLocationHover />
                 </p>
