@@ -14,7 +14,7 @@ export default function GsuLocationHover() {
   const [open, setOpen] = useState(false);
   const [shouldLoadMap, setShouldLoadMap] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
-  const triggerRef = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<HTMLAnchorElement>(null);
   const hideTimer = useRef<number | null>(null);
 
   const clearHideTimer = () => {
@@ -75,14 +75,17 @@ export default function GsuLocationHover() {
   }, [open]);
 
   return (
-    <span
+    <a
       ref={triggerRef}
-      className="inline-flex items-baseline"
+      href="https://www.gsu.edu"
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-baseline underline decoration-black/40 underline-offset-2 transition-colors duration-200 ease-in-out hover:decoration-black"
       onMouseEnter={show}
       onMouseLeave={hide}
     >
       <span className="inline-flex items-center gap-[0.18em]">
-        georgia state
+        GaState, Atlanta, GA
         <MapPin
           aria-hidden
           className={`size-[0.95em] translate-y-[-0.05em] transition-colors duration-200 ease-in-out ${
@@ -149,6 +152,6 @@ export default function GsuLocationHover() {
             document.body,
           )
         : null}
-    </span>
+    </a>
   );
 }

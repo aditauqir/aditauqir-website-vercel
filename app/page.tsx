@@ -100,6 +100,9 @@ const stackItems = [
   "faiss vector search",
   "redis",
   "docker",
+  "aws / s3 / ec2",
+  "azure",
+  "vercel",
   "linux",
   "cursor / claude code / codex / windsurf",
   "github actions",
@@ -232,7 +235,8 @@ export default function HomePage() {
                 </div>
 
                 <p>
-                  i&apos;m a computer science student at <GsuLocationHover />.
+                  i&apos;m a computer science student pursuing B.S./M.S. at{" "}
+                  <GsuLocationHover />.
                 </p>
                 <p>
                   i like building things that feel useful, sharp, and a little
