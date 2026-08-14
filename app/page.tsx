@@ -15,6 +15,7 @@ import {
   faSquareLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
 
+import GsuLocationHover from "@/components/GsuLocationHover";
 import HomeClock from "@/components/HomeClock";
 import {
   Accordion,
@@ -74,6 +75,15 @@ const projectItems = [
 ];
 
 const zirnSiteHref = "https://www.zirn.app/";
+
+const howIBuildItems = [
+  "start with the problem",
+  "build the smallest version that proves something.",
+  "measure what breaks.",
+  "throw away bad assumptions.",
+  "iterate fast.",
+  "keep the parts that actually work.",
+];
 
 const stackItems = [
   "python",
@@ -221,7 +231,9 @@ export default function HomePage() {
                   </HoverBorderGradient>
                 </div>
 
-                <p>i&apos;m a computer science student at georgia state.</p>
+                <p className="relative z-50">
+                  i&apos;m a computer science student at <GsuLocationHover />.
+                </p>
                 <p>
                   i like building things that feel useful, sharp, and a little
                   unfair.
@@ -334,6 +346,26 @@ export default function HomePage() {
                       </AccordionItem>
                     ))}
                   </Accordion>
+                </div>
+
+                <div className="space-y-3">
+                  <p className="font-semibold tracking-[-0.08em]">
+                    HOW I BUILD:
+                  </p>
+                  <ul className="space-y-1 pl-5">
+                    {howIBuildItems.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <p>
+                    i&apos;m not particularly interested in building demos that
+                    look intelligent.
+                  </p>
+                  <p>
+                    i want to build software that remembers, predicts,
+                    automates, or gives someone leverage they didn&apos;t have
+                    before.
+                  </p>
                 </div>
 
                 <div className="space-y-3">
