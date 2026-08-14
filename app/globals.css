@@ -155,3 +155,14 @@ a {
     cursor: pointer;
   }
 }
+
+@keyframes gsu-card-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
