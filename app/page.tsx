@@ -16,6 +16,7 @@ import {
   faSquareLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
 
+import AdiNoorHover from "@/components/AdiNoorHover";
 import GsuLocationHover from "@/components/GsuLocationHover";
 import HomeClock from "@/components/HomeClock";
 import {
@@ -118,6 +119,8 @@ const stackItems = [
   "github actions",
 ];
 
+const currentYear = new Date().getFullYear();
+
 export default function HomePage() {
   const [copiedProject, setCopiedProject] = useState<string | null>(null);
   const copyTimeoutRef = useRef<number | null>(null);
@@ -187,15 +190,10 @@ export default function HomePage() {
                     <PointerHighlight
                       rectangleClassName="border-black"
                       pointerClassName="text-black"
-                      containerClassName="inline-flex align-baseline"
+                      containerClassName="inline-flex align-baseline overflow-visible"
                     >
-                      <span className="relative z-10 inline-block px-1">
-                        Adi
-                      </span>
+                      <AdiNoorHover />
                     </PointerHighlight>
-                    <sup className="ml-1 align-super text-[0.38em] font-normal tracking-[-0.04em] text-[rgb(153,151,151)]">
-                      aka. &quot;Noor&quot;
-                    </sup>
                   </h1>
                   <HomeClock />
                 </div>
@@ -432,7 +430,7 @@ export default function HomePage() {
 
           <footer className="border-t border-[rgb(130,130,130)] px-6 py-4 text-[1rem] tracking-[-0.08em] sm:px-8 lg:px-12 lg:py-6 lg:text-[0.8rem] xl:px-16">
             <div className="mx-auto flex w-full max-w-[34rem] items-center justify-between">
-              <p>@noor</p>
+              <p>{`@noor ${currentYear} made in Atlanta, GA`}</p>
               <Button
                 type="button"
                 variant="ghost"

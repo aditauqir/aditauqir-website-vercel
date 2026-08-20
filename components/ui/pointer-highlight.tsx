@@ -15,59 +15,60 @@ export function PointerHighlight({
   containerClassName?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
 
-    if (container) {
-      const { width, height } = container.getBoundingClientRect();
-      setDimensions({ width, height });
+    if (!container) {
+      return;
     }
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect;
-        setDimensions({ width, height });
+    const markReady = () => {
+      const { width, height } = container.getBoundingClientRect();
+      if (width > 0 && height > 0) {
+        setReady(true);
       }
+    };
+
+    markReady();
+
+    const resizeObserver = new ResizeObserver(() => {
+      markReady();
     });
 
-    if (container) {
-      resizeObserver.observe(container);
-    }
+    resizeObserver.observe(container);
 
     return () => {
-      if (container) {
-        resizeObserver.unobserve(container);
-      }
+      resizeObserver.unobserve(container);
     };
   }, []);
 
   return (
     <div
-      className={cn("relative w-fit", containerClassName)}
+      className={cn("relative w-fit overflow-visible", containerClassName)}
       ref={containerRef}
     >
       {children}
-      {dimensions.width > 0 && dimensions.height > 0 && (
+      {ready && (
         <motion.div
-          className="pointer-events-none absolute inset-0 z-0"
+          className="pointer-events-none absolute inset-0 z-0 overflow-visible"
           initial={{ opacity: 0, scale: 0.95, originX: 0, originY: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <motion.div
             className={cn(
-              "absolute inset-0 border border-neutral-800 dark:border-neutral-200",
+              "absolute top-0 left-0 h-full w-full border border-neutral-800 dark:border-neutral-200",
               rectangleClassName,
             )}
             initial={{
               width: 0,
               height: 0,
             }}
-            whileInView={{
-              width: dimensions.width,
-              height: dimensions.height,
+            animate={{
+              width: "100%",
+              height: "100%",
             }}
             transition={{
               duration: 1,
@@ -75,14 +76,12 @@ export function PointerHighlight({
             }}
           />
           <motion.div
-            className="pointer-events-none absolute"
+            className="pointer-events-none absolute top-full left-full"
             initial={{ opacity: 0 }}
-            whileInView={{
-              opacity: 1,
-              x: dimensions.width + 4,
-              y: dimensions.height + 4,
-            }}
+            animate={{ opacity: 1 }}
             style={{
+              x: 4,
+              y: 4,
               rotate: -90,
             }}
             transition={{
