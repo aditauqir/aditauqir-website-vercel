@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpIcon,
+  ArrowUpRight,
   CheckIcon,
   CopyIcon,
   GlobeIcon,
@@ -52,6 +53,13 @@ const projectItems = [
     siteHref: "https://www.zirn.app/",
   },
   {
+    value: "fyp",
+    label: "fyp",
+    description:
+      "an orion browser extension for iphone that loads desktop youtube and restyles it into a phone-friendly player with background playback and screen-off audio. ublock origin handles ads, so it gets closer to youtube premium without the subscription.",
+    githubHref: "https://github.com/aditauqir/fyp",
+  },
+  {
     value: "awry",
     label: "awry",
     description:
@@ -75,6 +83,7 @@ const projectItems = [
 ];
 
 const zirnSiteHref = "https://www.zirn.app/";
+const fypGithubHref = "https://github.com/aditauqir/fyp";
 
 const howIBuildItems = [
   "start with the problem",
@@ -149,7 +158,7 @@ export default function HomePage() {
       return;
     }
 
-    const didCopy = await copyText(`git pull ${githubHref}`);
+    const didCopy = await copyText(`git clone ${githubHref}`);
 
     if (!didCopy) {
       return;
@@ -217,21 +226,41 @@ export default function HomePage() {
                     resume
                   </a>
                 </Button>
-                <div className="w-fit space-y-4 py-2">
-                  <p className="text-[0.76rem] leading-[1.4] tracking-[-0.05em] text-muted-foreground">
-                    A startup im working on
-                  </p>
-                  <HoverBorderGradient
-                    as="a"
-                    href={zirnSiteHref}
-                    target="_blank"
-                    rel="noreferrer"
-                    duration={0.8}
-                    containerClassName="rounded-full border-0 bg-transparent shadow-none"
-                    className="flex items-center border border-black bg-background px-3 py-1.5 text-[0.86rem] font-medium tracking-[-0.05em] !text-black shadow-none lg:text-[0.81rem]"
-                  >
-                    zirn.app
-                  </HoverBorderGradient>
+                <div className="flex w-full items-start justify-between gap-6 py-2">
+                  <div className="w-fit space-y-4">
+                    <p className="text-[0.76rem] leading-[1.4] tracking-[-0.05em] text-muted-foreground">
+                      A startup im working on
+                    </p>
+                    <HoverBorderGradient
+                      as="a"
+                      href={zirnSiteHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      duration={0.8}
+                      containerClassName="rounded-full border-0 bg-transparent shadow-none"
+                      className="flex items-center border border-black bg-background px-3 py-1.5 text-[0.86rem] font-medium tracking-[-0.05em] !text-black shadow-none lg:text-[0.81rem]"
+                    >
+                      zirn.app
+                    </HoverBorderGradient>
+                  </div>
+                  <div className="w-fit space-y-4 text-right">
+                    <p className="text-[0.76rem] leading-[1.4] tracking-[-0.05em] text-muted-foreground">
+                      A passion project im working on:
+                    </p>
+                    <div className="flex justify-end">
+                      <HoverBorderGradient
+                        as="a"
+                        href={fypGithubHref}
+                        target="_blank"
+                        rel="noreferrer"
+                        duration={0.8}
+                        containerClassName="rounded-full border-0 bg-transparent shadow-none"
+                        className="flex items-center border border-black bg-background px-3 py-1.5 text-[0.86rem] font-medium tracking-[-0.05em] !text-black shadow-none lg:text-[0.81rem]"
+                      >
+                        FYP
+                      </HoverBorderGradient>
+                    </div>
+                  </div>
                 </div>
 
                 <p className="relative z-[100]">
@@ -310,11 +339,26 @@ export default function HomePage() {
                           )}
                         >
                           <p>{projectItem.description}</p>
+                          {projectItem.siteHref ? (
+                            <a
+                              href={projectItem.siteHref}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-black underline decoration-black underline-offset-2"
+                            >
+                              zirn.app
+                              <ArrowUpRight
+                                aria-hidden
+                                className="size-3.5"
+                                strokeWidth={1.75}
+                              />
+                            </a>
+                          ) : null}
                           {projectItem.githubHref ? (
                             <div className="flex max-w-full items-center overflow-hidden rounded-lg border border-[rgb(185,190,188)] bg-[#f2f5f4] px-2">
                               <Input
                                 readOnly
-                                value={`git pull ${projectItem.githubHref}`}
+                                value={`git clone ${projectItem.githubHref}`}
                                 aria-label={`${projectItem.label} git command`}
                                 className="h-8 min-w-0 flex-1 border-0 bg-transparent px-0 text-[0.76rem] tracking-[-0.05em] text-[rgb(45,45,45)] shadow-none selection:bg-black/10 selection:text-black focus-visible:ring-0 lg:text-[0.72rem]"
                               />
