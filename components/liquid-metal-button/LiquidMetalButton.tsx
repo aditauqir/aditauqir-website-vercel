@@ -284,7 +284,7 @@ export function LiquidMetalButton({
       key={safeVariant}
       ref={frameRef}
       className={cn("liquid-metal-button__frame", ready && "is-ready")}
-      style={{ opacity: ready ? 1 : 0 }}
+      style={{ opacity: ready ? 0.95 : 0, zIndex: 1 }}
       title={title}
       srcDoc={source}
       sandbox="allow-scripts"
@@ -300,7 +300,13 @@ export function LiquidMetalButton({
 
   const inner = (
     <>
-      <span className="liquid-metal-button__fallback" aria-hidden="true">
+      <span
+        className="liquid-metal-button__fallback pointer-events-none absolute inset-[10px] z-[2] flex items-center justify-center rounded-full bg-[#0b0c0e] text-[0.86rem] leading-none font-medium tracking-[-0.05em] text-white shadow-[0_4px_9px_rgba(0,0,0,0.28),0_0_0_1px_rgba(220,220,220,0.55)]"
+        aria-hidden="true"
+        style={{
+          fontVariationSettings: '"wdth" 95.1, "wght" 500',
+        }}
+      >
         {safeText}
       </span>
       {frame}
@@ -321,7 +327,10 @@ export function LiquidMetalButton({
         target={target}
         rel={linkRel}
         aria-label={safeText}
-        className={cn("liquid-metal-button", className)}
+        className={cn(
+          "liquid-metal-button relative inline-flex items-center justify-center overflow-visible",
+          className,
+        )}
         data-state={!mounted ? "paused" : ready ? "ready" : "loading"}
         data-variant={safeVariant}
         style={hostStyle}
@@ -337,7 +346,10 @@ export function LiquidMetalButton({
   return (
     <div
       ref={setHost}
-      className={cn("liquid-metal-button", className)}
+      className={cn(
+        "liquid-metal-button relative inline-flex items-center justify-center overflow-visible",
+        className,
+      )}
       data-state={!mounted ? "paused" : ready ? "ready" : "loading"}
       data-variant={safeVariant}
       style={hostStyle}
