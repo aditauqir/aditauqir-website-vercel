@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type MouseEvent,
 } from "react";
 
 import { cn } from "@/lib/utils";
@@ -38,7 +39,7 @@ const LIQUID_METAL_BUTTON_BRIDGE = `
     if(!config) return;
     const text = typeof config.text === 'string' ? config.text.slice(0, 24) : '';
     const label = btn.querySelector('.lbl');
-    if(label) label.textContent = text;
+    if(label && text) label.textContent = text;
     btn.setAttribute('aria-label', text || 'Button');
     if(Number.isFinite(config.pillWidthUnits)) {
       stage.style.setProperty('--bw', 'calc(' + config.pillWidthUnits + ' * var(--u))');
@@ -53,25 +54,31 @@ const LIQUID_METAL_BUTTON_BRIDGE = `
     if(icon) icon.style.display = config.showIcon === false ? 'none' : '';
     document.body.style.background = 'transparent';
     document.documentElement.style.background = 'transparent';
+    document.documentElement.style.colorScheme = 'light';
     stage.style.position = 'absolute';
     stage.style.top = '50%';
     stage.style.left = '50%';
     stage.style.transform = 'translate(-50%, -50%)';
-  });
-
-  btn.addEventListener('click', () => {
-    parent.postMessage({ liquidMetalButton: { type: 'activate' } }, '*');
+    if (typeof config.hover === 'boolean' && typeof window.__hover === 'function') {
+      window.__hover(config.hover);
+    }
   });
 </script>`;
 
 const EMBED_STYLE = `
 <style id="liquid-metal-embed">
+  :root { color-scheme: light; }
   html, body {
     background: transparent !important;
+    color-scheme: light;
   }
   body {
     background: none !important;
+    overflow: visible !important;
     font-family: "Trispace", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .stage {
+    overflow: visible;
   }
   .btn {
     font-variation-settings: "wdth" 95.1, "wght" 500;
@@ -113,7 +120,8 @@ function withTransparentPage(source: string) {
     .replace(
       /background:\s*radial-gradient\(46vmax 32vmax at 50% 47%,\s*#191b21 0%, #0e0f13 34%, #050506 62%, #000 88%\) #000;/,
       "background: transparent;",
-    );
+    )
+    .replace("--pad: calc(900 * var(--u));", "--pad: calc(72 * var(--u));");
 }
 
 function sourceForVariant(variant: Exclude<LiquidMetalButtonVariant, "play">) {
@@ -142,7 +150,7 @@ function clamp(value: number, min: number, max: number, fallback: number) {
 
 const REFERENCE_HEIGHT = 516;
 const DEFAULT_PILL_HEIGHT = 40;
-const DEFAULT_PAD_UNITS = 160;
+const RIM_PAD_PX = 10;
 
 export function LiquidMetalButton({
   className = "",
@@ -151,11 +159,12 @@ export function LiquidMetalButton({
   text,
   href,
   target = "_blank",
+  rel,
   showIcon = true,
   embedded = true,
   onClick,
 }: LiquidMetalButtonProps) {
-  const hostRef = useRef<HTMLDivElement>(null);
+  const hostRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const intersectsRef = useRef(true);
   const [mounted, setMounted] = useState(true);
@@ -188,29 +197,35 @@ export function LiquidMetalButton({
   );
 
   const unit = safeHeight / REFERENCE_HEIGHT;
-  const padPx = DEFAULT_PAD_UNITS * unit;
+  const padUnits = RIM_PAD_PX / unit;
   const buttonWidth =
     safeVariant === "pill" && pillWidthUnits
       ? pillWidthUnits * unit
       : safeHeight;
-  const hostWidth = Math.ceil(buttonWidth + padPx * 2);
-  const hostHeight = Math.ceil(safeHeight + padPx * 2);
+  const hostWidth = Math.ceil(buttonWidth + RIM_PAD_PX * 2);
+  const hostHeight = Math.ceil(safeHeight + RIM_PAD_PX * 2);
+  const linkRel =
+    rel ?? (target === "_blank" ? "noreferrer" : undefined);
 
-  const syncButtonConfig = useCallback(() => {
-    frameRef.current?.contentWindow?.postMessage(
-      {
-        liquidMetalButton: {
-          text: safeText,
-          pillWidthUnits,
-          heightPx: safeHeight,
-          padUnits: DEFAULT_PAD_UNITS,
-          showIcon,
-          embedded,
+  const syncButtonConfig = useCallback(
+    (hover?: boolean) => {
+      frameRef.current?.contentWindow?.postMessage(
+        {
+          liquidMetalButton: {
+            text: safeText,
+            pillWidthUnits,
+            heightPx: safeHeight,
+            padUnits,
+            showIcon,
+            embedded,
+            ...(typeof hover === "boolean" ? { hover } : {}),
+          },
         },
-      },
-      "*",
-    );
-  }, [embedded, pillWidthUnits, safeHeight, safeText, showIcon]);
+        "*",
+      );
+    },
+    [embedded, padUnits, pillWidthUnits, safeHeight, safeText, showIcon],
+  );
 
   useEffect(() => {
     const host = hostRef.current;
@@ -243,21 +258,19 @@ export function LiquidMetalButton({
     syncButtonConfig();
   }, [ready, syncButtonConfig]);
 
-  useEffect(() => {
-    const receiveMessage = (event: MessageEvent) => {
-      if (event.source !== frameRef.current?.contentWindow) return;
-      if (event.data?.liquidMetalButton?.type !== "activate") return;
-      onClick?.();
-      if (!href) return;
-      if (target === "_blank") {
-        window.open(href, "_blank", "noopener,noreferrer");
-        return;
+  const activate = useCallback(() => {
+    onClick?.();
+  }, [onClick]);
+
+  const handleHostClick = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      activate();
+      if (!href) {
+        event.preventDefault();
       }
-      window.location.assign(href);
-    };
-    window.addEventListener("message", receiveMessage);
-    return () => window.removeEventListener("message", receiveMessage);
-  }, [href, onClick, target]);
+    },
+    [activate, href],
+  );
 
   const title =
     safeVariant === "circle"
@@ -266,32 +279,73 @@ export function LiquidMetalButton({
         ? "Interactive liquid metal play button"
         : `${safeText} liquid metal button`;
 
+  const frame = mounted ? (
+    <iframe
+      key={safeVariant}
+      ref={frameRef}
+      className={cn("liquid-metal-button__frame", ready && "is-ready")}
+      style={{ opacity: ready ? 1 : 0 }}
+      title={title}
+      srcDoc={source}
+      sandbox="allow-scripts"
+      loading="eager"
+      tabIndex={-1}
+      aria-hidden="true"
+      onLoad={() => {
+        setReady(true);
+        syncButtonConfig();
+      }}
+    />
+  ) : null;
+
+  const inner = (
+    <>
+      <span className="liquid-metal-button__fallback" aria-hidden="true">
+        {safeText}
+      </span>
+      {frame}
+    </>
+  );
+
+  const hostStyle = { width: hostWidth, height: hostHeight };
+
+  const setHost = useCallback((node: HTMLElement | null) => {
+    hostRef.current = node;
+  }, []);
+
+  if (href) {
+    return (
+      <a
+        ref={setHost}
+        href={href}
+        target={target}
+        rel={linkRel}
+        aria-label={safeText}
+        className={cn("liquid-metal-button", className)}
+        data-state={!mounted ? "paused" : ready ? "ready" : "loading"}
+        data-variant={safeVariant}
+        style={hostStyle}
+        onClick={handleHostClick}
+        onPointerEnter={() => syncButtonConfig(true)}
+        onPointerLeave={() => syncButtonConfig(false)}
+      >
+        {inner}
+      </a>
+    );
+  }
+
   return (
     <div
-      ref={hostRef}
+      ref={setHost}
       className={cn("liquid-metal-button", className)}
       data-state={!mounted ? "paused" : ready ? "ready" : "loading"}
       data-variant={safeVariant}
-      style={{ width: hostWidth, height: hostHeight }}
+      style={hostStyle}
+      onClick={activate}
+      onPointerEnter={() => syncButtonConfig(true)}
+      onPointerLeave={() => syncButtonConfig(false)}
     >
-      {mounted ? (
-        <iframe
-          key={safeVariant}
-          ref={frameRef}
-          className={cn(
-            "liquid-metal-button__frame",
-            ready && "is-ready",
-          )}
-          title={title}
-          srcDoc={source}
-          sandbox="allow-scripts"
-          loading="eager"
-          onLoad={() => {
-            setReady(true);
-            syncButtonConfig();
-          }}
-        />
-      ) : null}
+      {inner}
     </div>
   );
 }

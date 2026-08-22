@@ -1,0 +1,12 @@
+---
+description: This portfolio ships directly to GitHub main. Never create or update pull requests.
+alwaysApply: true
+---
+
+# No pull requests for this portfolio
+
+Repo: `aditauqir/aditauqir-website-vercel`.
+
+Do not create, open, update, or merge PRs. Do not use `gh pr` or ManagePullRequest.
+
+Commit and push to GitHub `main` directly (checkout `main`, pull, merge the working branch, `git push origin main`).

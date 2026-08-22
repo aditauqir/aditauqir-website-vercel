@@ -41,7 +41,7 @@ function drawCube(
     projectIso(x - s, y + s, z + s),
   ];
   ctx.strokeStyle = colorStr;
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 2.25;
   ctx.beginPath();
   ctx.moveTo(pts[0].x, pts[0].y);
   ctx.lineTo(pts[1].x, pts[1].y);
@@ -67,11 +67,11 @@ function drawCube(
 function drawNodes(ctx: CanvasRenderingContext2D, t: number) {
   const s = 22;
   const float = Math.sin(t) * 4;
-  drawCube(ctx, -35, -float, -35, s, "rgba(0,0,0,0.18)");
-  drawCube(ctx, 35, float, -35, s, "rgba(0,0,0,0.18)");
-  drawCube(ctx, -35, float, 35, s, "rgba(0,0,0,0.18)");
-  drawCube(ctx, 35, -float, 35, s, "rgba(0,0,0,0.18)");
-  drawCube(ctx, 0, Math.cos(t) * 6 - 15, 0, s * 0.9, "rgba(0,0,0,0.78)");
+  drawCube(ctx, -35, -float, -35, s, "rgba(0,0,0,0.55)");
+  drawCube(ctx, 35, float, -35, s, "rgba(0,0,0,0.55)");
+  drawCube(ctx, -35, float, 35, s, "rgba(0,0,0,0.55)");
+  drawCube(ctx, 35, -float, 35, s, "rgba(0,0,0,0.55)");
+  drawCube(ctx, 0, Math.cos(t) * 6 - 15, 0, s * 0.9, "#000000");
 }
 
 export function DiagnosticsPanel({
