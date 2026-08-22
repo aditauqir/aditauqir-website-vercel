@@ -10,7 +10,7 @@ export default function SiteLoading() {
       aria-live="polite"
       aria-label="Loading"
     >
-      <div className="size-[min(72vmin,22rem)]">
+      <div className="h-[min(72vmin,22rem)] w-[min(72vmin,22rem)] min-h-[12rem] min-w-[12rem]">
         <DiagnosticsPanel variant="nodes" aria-label="Loading" />
       </div>
     </div>

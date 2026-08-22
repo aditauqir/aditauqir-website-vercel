@@ -284,6 +284,7 @@ export function LiquidMetalButton({
       key={safeVariant}
       ref={frameRef}
       className={cn("liquid-metal-button__frame", ready && "is-ready")}
+      style={{ opacity: ready ? 1 : 0 }}
       title={title}
       srcDoc={source}
       sandbox="allow-scripts"

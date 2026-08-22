@@ -37,22 +37,24 @@ type MarkConfig = {
 const MARK_CONFIG: Record<string, MarkConfig> = {
   github: {
     key: "github",
-    n: 30,
-    nMini: 13,
+    n: 28,
+    nMini: 14,
     motion: "diag",
     invert: "circle",
     recenter: true,
-    v: 0.62,
+    v: 0.78,
+    fit: 0.72,
   },
   linkedin: {
     key: "linkedin",
-    n: 30,
-    nMini: 13,
+    n: 28,
+    nMini: 14,
     motion: "scan",
     speed: 0.38,
     invert: "box",
-    accent: [40, 130, 220],
-    v: 0.66,
+    accent: [10, 102, 194],
+    v: 0.82,
+    fit: 0.78,
   },
 };
 
@@ -65,7 +67,9 @@ function lerp(a: number, b: number, m: number) {
 }
 
 function rscale(size: number) {
-  return Math.pow(size / 300, 0.6);
+  const base = Math.pow(size / 300, 0.6);
+  // Homepage orbs are 56px; the engine was tuned for ~300px canvases.
+  return size < 80 ? Math.max(1.35, base * 4.6) : base;
 }
 
 function proj(yaw: number, tilt: number, cx: number, cy: number, s: number) {
@@ -223,6 +227,29 @@ function pathDots(
   return pts;
 }
 
+function drawSolidLogo(
+  ctx: CanvasRenderingContext2D,
+  size: number,
+  cfg: MarkConfig,
+  light: boolean,
+) {
+  const path = MARK_PATHS[cfg.key];
+  if (!path) return;
+  const fit = cfg.fit ?? 0.72;
+  const scale = (size * fit) / 24;
+  ctx.save();
+  ctx.translate(size / 2, size / 2);
+  ctx.scale(scale, scale);
+  ctx.translate(-12, -12);
+  if (cfg.key === "linkedin") {
+    ctx.fillStyle = light ? "rgb(10,102,194)" : "rgb(80,148,226)";
+  } else {
+    ctx.fillStyle = light ? "rgb(17,17,17)" : "rgb(236,236,236)";
+  }
+  ctx.fill(new Path2D(path));
+  ctx.restore();
+}
+
 function drawMark(
   ctx: CanvasRenderingContext2D,
   size: number,
@@ -237,12 +264,15 @@ function drawMark(
   const R = (size / 2) * (cfg.fit ?? 0.88);
   const rs = rscale(size) * (o.mini ? 1.8 : 1);
   const p = proj(0.15 * Math.sin(t * 0.4), 0.13 * Math.sin(t * 0.31), cx, cy, R);
+  // On the light homepage, inverted holes read as empty white. Paint the
+  // mark itself so GitHub/LinkedIn stay visible.
+  const invert = o.light ? undefined : cfg.invert;
   const pts = pathDots(
     cfg.key,
     path,
     o.mini ? cfg.nMini : cfg.n,
-    cfg.invert,
-    cfg.recenter,
+    invert,
+    invert ? cfg.recenter : false,
   );
   const wave = ((((t * (cfg.speed ?? 0.4)) % 1) + 1) % 1) * 2.4 - 1.2;
   const dots: Dot[] = [];
@@ -266,7 +296,14 @@ function drawMark(
       v: (cfg.v ?? 0.58) + 0.15 * dep + 0.3 * crest,
     });
   }
-  paint(ctx, dots, cfg.accent ?? o.accent, cfg.accent ? 0.9 : 0, 0.3, o.light);
+  paint(
+    ctx,
+    dots,
+    cfg.accent ?? o.accent,
+    cfg.accent ? 0.9 : 0,
+    size < 80 ? 1.15 : 0.3,
+    o.light,
+  );
 }
 
 function drawFallback(
@@ -333,8 +370,23 @@ export function mountNativeOrb(
       light: controls.light,
       accent: cfg?.accent ?? null,
     };
-    if (cfg) drawMark(ctx, size, t, o, cfg);
-    else drawFallback(ctx, size, t, o);
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 2 - 0.5, 0, TAU);
+    ctx.fillStyle = controls.light
+      ? "rgba(0,0,0,0.06)"
+      : "rgba(255,255,255,0.08)";
+    ctx.fill();
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 2 - 0.5, 0, TAU);
+    ctx.clip();
+    if (cfg) {
+      drawSolidLogo(ctx, size, cfg, controls.light);
+      drawMark(ctx, size, t, o, cfg);
+    } else {
+      drawFallback(ctx, size, t, o);
+    }
+    ctx.restore();
   };
 
   const staticT = controls.variant === "linkedin" ? 1.2 : 1.1;

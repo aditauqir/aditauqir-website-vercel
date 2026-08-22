@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 import SiteLoading from "@/components/SiteLoading";
 
-const SPLASH_MS = 2200;
-const FADE_MS = 420;
+const SPLASH_MS = 2600;
+const FADE_MS = 480;
 
 export default function HomeSplash() {
   const [visible, setVisible] = useState(true);
@@ -31,7 +31,7 @@ export default function HomeSplash() {
 
   return (
     <div
-      className="fixed inset-0 z-[300] bg-background transition-opacity duration-[420ms] ease-out"
+      className="fixed inset-0 z-[300] bg-background transition-opacity duration-[480ms] ease-out"
       style={{ opacity: fading ? 0 : 1 }}
       role="status"
       aria-live="polite"

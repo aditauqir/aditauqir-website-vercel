@@ -212,7 +212,7 @@ export function BrandOrbs({
       width={pixels}
       height={pixels}
       aria-hidden="true"
-      className="block bg-transparent"
+      className="block rounded-full bg-black/[0.06]"
       style={{ width: pixels, height: pixels }}
     />
   );
