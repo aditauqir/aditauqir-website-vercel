@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "components/brand-orbs/engine.ts",
+    "components/liquid-metal-button/source.ts",
   ]),
 ]);
 

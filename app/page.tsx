@@ -10,14 +10,10 @@ import {
   GlobeIcon,
 } from "lucide-react";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSquareGithub,
-  faSquareLinkedin,
-} from "@fortawesome/free-brands-svg-icons";
-
+import { BrandOrbs } from "@/components/brand-orbs/BrandOrbs";
 import GsuLocationHover from "@/components/GsuLocationHover";
 import HomeClock from "@/components/HomeClock";
+import { LiquidMetalButton } from "@/components/liquid-metal-button/LiquidMetalButton";
 import {
   Accordion,
   AccordionContent,
@@ -25,7 +21,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import { Input } from "@/components/ui/input";
 import { PointerHighlight } from "@/components/ui/pointer-highlight";
 import { cn } from "@/lib/utils";
@@ -34,12 +29,12 @@ const socialLinks = [
   {
     label: "GitHub",
     href: "https://github.com/aditauqir",
-    icon: faSquareGithub,
+    variant: "github" as const,
   },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/aditauqir/",
-    icon: faSquareLinkedin,
+    variant: "linkedin" as const,
   },
 ];
 
@@ -200,21 +195,18 @@ export default function HomePage() {
                   <HomeClock />
                 </div>
 
-                <div className="flex shrink-0 items-center gap-4 pt-1">
+                <div className="flex shrink-0 items-center gap-3 pt-1">
                   {socialLinks.map((socialLink) => (
-                    <Link
+                    <BrandOrbs
                       key={socialLink.label}
+                      variant={socialLink.variant}
+                      size="medium"
+                      mode="light"
                       href={socialLink.href}
-                      aria-label={socialLink.label}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex h-[1.2rem] w-[1.2rem] items-center justify-center rounded-sm border border-border-subtle bg-white text-black transition-colors duration-200 hover:text-[rgb(90,90,90)]"
-                    >
-                      <FontAwesomeIcon
-                        icon={socialLink.icon}
-                        className="text-[1.95rem]"
-                      />
-                    </Link>
+                      aria-label={socialLink.label}
+                    />
                   ))}
                 </div>
               </div>
@@ -228,39 +220,35 @@ export default function HomePage() {
                     resume
                   </a>
                 </Button>
-                <div className="flex w-full items-start justify-between gap-6 py-2">
-                  <div className="w-fit space-y-4">
+                <div className="flex w-full items-start justify-between gap-4 py-2">
+                  <div className="w-fit space-y-2">
                     <p className="text-[0.76rem] leading-[1.4] tracking-[-0.05em] text-muted-foreground">
                       A startup im working on
                     </p>
-                    <HoverBorderGradient
-                      as="a"
+                    <LiquidMetalButton
+                      variant="pill"
+                      text="zirn.app"
                       href={zirnSiteHref}
                       target="_blank"
                       rel="noreferrer"
-                      duration={0.8}
-                      containerClassName="rounded-full border-0 bg-transparent shadow-none"
-                      className="flex items-center border border-black bg-background px-3 py-1.5 text-[0.86rem] font-medium tracking-[-0.05em] !text-black shadow-none lg:text-[0.81rem]"
-                    >
-                      zirn.app
-                    </HoverBorderGradient>
+                      showIcon={false}
+                      height={40}
+                    />
                   </div>
-                  <div className="w-fit space-y-4 text-right">
+                  <div className="w-fit space-y-2 text-right">
                     <p className="text-[0.76rem] leading-[1.4] tracking-[-0.05em] text-muted-foreground">
                       A passion project im working on:
                     </p>
                     <div className="flex justify-end">
-                      <HoverBorderGradient
-                        as="a"
+                      <LiquidMetalButton
+                        variant="pill"
+                        text="FYP"
                         href={fypGithubHref}
                         target="_blank"
                         rel="noreferrer"
-                        duration={0.8}
-                        containerClassName="rounded-full border-0 bg-transparent shadow-none"
-                        className="flex items-center border border-black bg-background px-3 py-1.5 text-[0.86rem] font-medium tracking-[-0.05em] !text-black shadow-none lg:text-[0.81rem]"
-                      >
-                        FYP
-                      </HoverBorderGradient>
+                        showIcon={false}
+                        height={40}
+                      />
                     </div>
                   </div>
                 </div>
