@@ -1,9 +1,7 @@
 "use client";
 
 import {
-  useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -11,7 +9,7 @@ import {
 
 import { cn } from "@/lib/utils";
 
-import { BRAND_ORBS_ENGINE } from "./engine";
+import { mountNativeOrb } from "./native-orb";
 
 export const BRAND_ORB_VARIANTS = [
   "claude",
@@ -143,66 +141,6 @@ function useAutomaticMode(enabled: boolean) {
   return mode;
 }
 
-const ORB_ENGINE = BRAND_ORBS_ENGINE.replace(/<\/script/gi, "<\\/script");
-
-function buildFocusedDocument(
-  variant: BrandOrbVariant,
-  size: BrandOrbSize,
-  mode: Exclude<BrandOrbMode, "auto">,
-) {
-  const filter =
-    mode === "light"
-      ? "invert(1) hue-rotate(180deg) contrast(1.04) saturate(.92)"
-      : "none";
-  const canvasSize = SIZE_PIXELS[size];
-  const variantJson = JSON.stringify(variant).replace(/</g, "\\u003c");
-  const controlScript = `<script data-brand-orbs-controls>
-(function () {
-  var nativeNow = performance.now.bind(performance);
-  var last = nativeNow();
-  var virtual = last;
-  var controls = { speed: 1, paused: false };
-  window.__BRAND_ORB_PAUSED = false;
-  performance.now = function () {
-    var real = nativeNow();
-    if (!controls.paused) virtual += (real - last) * controls.speed;
-    last = real;
-    return virtual;
-  };
-  window.addEventListener('message', function (event) {
-    if (!event.data || event.data.type !== 'brand-orbs-controls') return;
-    var next = event.data.controls || {};
-    if (Number.isFinite(next.speed)) controls.speed = Math.max(.1, Math.min(3, next.speed));
-    controls.paused = Boolean(next.paused);
-    window.__BRAND_ORB_PAUSED = controls.paused;
-  });
-})();
-</script>`;
-  const engine = ORB_ENGINE.replace(
-    'if (document.visibilityState !== "hidden")',
-    'if (document.visibilityState !== "hidden" && !window.__BRAND_ORB_PAUSED)',
-  );
-
-  return `<!doctype html>
-<html lang="en" data-theme="${mode}">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${VARIANT_LABELS[variant]} Brand Orb</title>
-<style>
-html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent; }
-body { display: grid; place-items: center; }
-canvas { display: block; width: ${canvasSize}px; height: ${canvasSize}px; filter: ${filter}; }
-</style>
-${controlScript}
-</head>
-<body>
-<canvas data-mode=${variantJson} data-size="${canvasSize}" aria-hidden="true"></canvas>
-<script>${engine}</script>
-</body>
-</html>`;
-}
-
 export function BrandOrbs({
   variant = BRAND_ORBS_DEFAULTS.variant,
   size = BRAND_ORBS_DEFAULTS.size,
@@ -216,7 +154,9 @@ export function BrandOrbs({
   className,
   style,
 }: BrandOrbsProps) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pausedRef = useRef(paused);
+  const speedRef = useRef(speed);
   const [hostVisible, setHostVisible] = useState(true);
   const [documentVisible, setDocumentVisible] = useState(
     () => typeof document === "undefined" || !document.hidden,
@@ -229,30 +169,33 @@ export function BrandOrbs({
   const safeSize = BRAND_ORB_SIZES.includes(size) ? size : BRAND_ORBS_DEFAULTS.size;
   const safeSpeed = clamp(speed, 0.1, 3);
   const effectivePaused = paused || !hostVisible || !documentVisible;
-  const source = useMemo(
-    () => buildFocusedDocument(safeVariant, safeSize, resolvedMode),
-    [resolvedMode, safeSize, safeVariant],
-  );
   const pixels = SIZE_PIXELS[safeSize];
   const label = ariaLabel ?? `${VARIANT_LABELS[safeVariant]} animated brand orb`;
 
-  const postControls = useCallback(() => {
-    iframeRef.current?.contentWindow?.postMessage(
-      {
-        type: "brand-orbs-controls",
-        controls: { speed: safeSpeed, paused: effectivePaused },
-      },
-      "*",
-    );
+  useEffect(() => {
+    pausedRef.current = effectivePaused;
+    speedRef.current = safeSpeed;
   }, [effectivePaused, safeSpeed]);
 
   useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!iframe || typeof IntersectionObserver === "undefined") return undefined;
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+    return mountNativeOrb(canvas, {
+      variant: safeVariant,
+      size: pixels,
+      light: resolvedMode === "light",
+      getPaused: () => pausedRef.current,
+      getSpeed: () => speedRef.current,
+    });
+  }, [pixels, resolvedMode, safeVariant]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || typeof IntersectionObserver === "undefined") return undefined;
     const observer = new IntersectionObserver(([entry]) =>
       setHostVisible(entry?.isIntersecting ?? true),
     );
-    observer.observe(iframe);
+    observer.observe(canvas);
     return () => observer.disconnect();
   }, []);
 
@@ -263,21 +206,14 @@ export function BrandOrbs({
     return () => document.removeEventListener("visibilitychange", update);
   }, []);
 
-  useEffect(() => {
-    postControls();
-  }, [postControls, source]);
-
   const orb = (
-    <iframe
-      ref={iframeRef}
-      title={href ? undefined : label}
-      srcDoc={source}
-      sandbox="allow-scripts"
-      loading="eager"
-      tabIndex={href ? -1 : undefined}
-      onLoad={postControls}
-      className="block size-full border-0 bg-transparent"
-      style={{ pointerEvents: href ? "none" : "auto" }}
+    <canvas
+      ref={canvasRef}
+      width={pixels}
+      height={pixels}
+      aria-hidden="true"
+      className="block bg-transparent"
+      style={{ width: pixels, height: pixels }}
     />
   );
 
@@ -295,7 +231,7 @@ export function BrandOrbs({
         rel={rel}
         aria-label={ariaLabel ?? VARIANT_LABELS[safeVariant]}
         className={cn(
-          "inline-flex overflow-hidden rounded-full outline-offset-2 focus-visible:outline-2 focus-visible:outline-black",
+          "inline-flex items-center justify-center overflow-visible rounded-full outline-offset-2 focus-visible:outline-2 focus-visible:outline-black",
           className,
         )}
         style={frameStyle}
@@ -306,7 +242,12 @@ export function BrandOrbs({
   }
 
   return (
-    <span className={cn("inline-flex overflow-hidden", className)} style={frameStyle}>
+    <span
+      className={cn("inline-flex items-center justify-center overflow-visible", className)}
+      style={frameStyle}
+      role="img"
+      aria-label={label}
+    >
       {orb}
     </span>
   );

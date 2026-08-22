@@ -13,6 +13,7 @@ import {
 import { BrandOrbs } from "@/components/brand-orbs/BrandOrbs";
 import GsuLocationHover from "@/components/GsuLocationHover";
 import HomeClock from "@/components/HomeClock";
+import HomeSplash from "@/components/HomeSplash";
 import { LiquidMetalButton } from "@/components/liquid-metal-button/LiquidMetalButton";
 import {
   Accordion,
@@ -171,6 +172,7 @@ export default function HomePage() {
 
   return (
     <>
+      <HomeSplash />
       <main className="flex min-h-screen flex-col bg-background text-foreground">
         <div className="flex min-h-screen flex-1 flex-col transition-all duration-200">
           <section className="flex-1 px-6 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-[7rem] xl:px-16">
