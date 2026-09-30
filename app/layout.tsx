@@ -1,12 +1,27 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Source_Code_Pro } from "next/font/google";
 
 import { generalSans, redaction10 } from "./fonts";
 import "./globals.css";
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#cbbfc6" },
+    { media: "(prefers-color-scheme: dark)", color: "#cbbfc6" },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "Adi Tauqir",
   description: "Personal portfolio",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Adi Tauqir",
+  },
 };
 
 const sourceCode = Source_Code_Pro({
@@ -22,9 +37,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${generalSans.variable} ${sourceCode.variable} ${redaction10.variable}`}
+      className={`${generalSans.variable} ${sourceCode.variable} ${redaction10.variable} bg-[#cbbfc6]`}
     >
-      <body className={generalSans.className}>{children}</body>
+      <body className={`${generalSans.className} bg-[#cbbfc6]`}>{children}</body>
     </html>
   );
 }

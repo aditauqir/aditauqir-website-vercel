@@ -227,11 +227,11 @@ export default function HomePage() {
 
   return (
     <>
-      <main className="relative flex min-h-screen flex-col bg-transparent text-neutral-900">
+      <main className="relative flex min-h-screen min-h-[100dvh] flex-col bg-transparent text-neutral-900">
         {/* Full-bleed lavender sunset background */}
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed inset-0 z-0 select-none overflow-hidden"
+          className="pointer-events-none fixed -top-[5vh] -bottom-[5vh] -left-[1vw] -right-[1vw] z-0 h-[110dvh] w-[102vw] select-none overflow-hidden"
         >
           {/* Base sharp background */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -287,8 +287,8 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/18 to-white/35" />
         </div>
 
-        <div className="relative z-10 flex min-h-screen flex-1 flex-col transition-all duration-200">
-          <section className="flex-1 px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-[7rem] xl:px-16">
+        <div className="relative z-10 flex min-h-screen min-h-[100dvh] flex-1 flex-col transition-all duration-200">
+          <section className="flex-1 px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-8 sm:px-8 sm:py-10 lg:px-12 lg:py-[7rem] xl:px-16">
             <div className="mx-auto flex w-full max-w-[34rem] flex-col gap-6 lg:gap-8">
               <div className="space-y-5">
                 <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
@@ -579,7 +579,7 @@ export default function HomePage() {
           </div>
         </section>
 
-          <footer className="relative mt-auto w-full px-6 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12 xl:px-16">
+          <footer className="relative mt-auto w-full px-6 pt-8 pb-[max(2rem,calc(env(safe-area-inset-bottom)+1.5rem))] sm:px-8 sm:py-10 lg:px-12 lg:py-12 xl:px-16">
             <div className="mx-auto flex w-full max-w-[34rem] items-center justify-between text-[0.84rem] text-neutral-800 lg:text-[0.8rem]">
               <p className="font-medium">{`@noor ${currentYear} made in Atlanta, GA`}</p>
               <Button
