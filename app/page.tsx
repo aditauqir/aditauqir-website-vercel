@@ -231,57 +231,15 @@ export default function HomePage() {
         {/* Full-bleed lavender sunset background */}
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed top-0 left-0 right-0 -bottom-[20vh] z-0 h-[120dvh] w-full select-none overflow-hidden bg-[#cfbfc5]"
+          className="pointer-events-none fixed inset-0 z-0 select-none overflow-hidden"
         >
           {/* Base sharp background */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/site-bg.jpg"
             alt=""
-            className="h-full w-full object-cover object-top"
+            className="h-full w-full object-cover object-center"
           />
-
-          {/* Soft atmospheric background blur around text when in lower 50% of viewport */}
-          <div
-            className="absolute inset-0 overflow-hidden"
-            style={{
-              maskImage:
-                "linear-gradient(to bottom, transparent 0%, transparent 42%, black 52%, black 100%)",
-              WebkitMaskImage:
-                "linear-gradient(to bottom, transparent 0%, transparent 42%, black 52%, black 100%)",
-            }}
-          >
-            {/* Horizontal mask centered around the text column */}
-            <div
-              className="absolute inset-0 overflow-hidden"
-              style={{
-                maskImage:
-                  "radial-gradient(ellipse 26rem 100% at 50% 50%, black 50%, transparent 100%)",
-                WebkitMaskImage:
-                  "radial-gradient(ellipse 26rem 100% at 50% 50%, black 50%, transparent 100%)",
-              }}
-            >
-              {/* Blurred background image layer, pixel-aligned with base image */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/site-bg.jpg"
-                alt=""
-                className="h-full w-full object-cover object-top scale-[1.03]"
-                style={{
-                  filter: "blur(18px)",
-                  WebkitFilter: "blur(18px)",
-                }}
-              />
-              {/* Subtle glass luminescence around text column */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(ellipse 22rem 100% at 50% 50%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 75%, transparent 100%)",
-                }}
-              />
-            </div>
-          </div>
         </div>
 
         <div className="relative z-10 flex min-h-screen min-h-[100dvh] flex-1 flex-col transition-all duration-200">
