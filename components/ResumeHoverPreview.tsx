@@ -13,6 +13,7 @@ export default function ResumeHoverPreview() {
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const xToRef = useRef<gsap.QuickToFunc | null>(null);
   const yToRef = useRef<gsap.QuickToFunc | null>(null);
+  const isTouchRef = useRef(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -41,6 +42,15 @@ export default function ResumeHoverPreview() {
       ease: "power3.out",
     });
 
+    const isMobileOrTouch = () => {
+      if (typeof window === "undefined") return false;
+      return (
+        isTouchRef.current ||
+        window.matchMedia("(hover: none), (pointer: coarse)").matches ||
+        window.innerWidth < 768
+      );
+    };
+
     const updatePosition = (clientX: number, clientY: number) => {
       const halfW = CARD_WIDTH / 2;
       const halfH = CARD_HEIGHT / 2;
@@ -58,6 +68,10 @@ export default function ResumeHoverPreview() {
     };
 
     const handleMouseEnter = (e: MouseEvent) => {
+      if (isMobileOrTouch()) {
+        return;
+      }
+
       const halfW = CARD_WIDTH / 2;
       const halfH = CARD_HEIGHT / 2;
       const inset = 16;
@@ -83,6 +97,9 @@ export default function ResumeHoverPreview() {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
+      if (isMobileOrTouch()) {
+        return;
+      }
       updatePosition(e.clientX, e.clientY);
     };
 
@@ -95,21 +112,56 @@ export default function ResumeHoverPreview() {
       });
     };
 
+    // Mobile / touch event listeners: dismiss immediately and mark touch active
+    const handleTouchStart = () => {
+      isTouchRef.current = true;
+      gsap.set(thumbnail, { scale: 0 });
+    };
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (e.pointerType === "touch" || e.pointerType === "pen") {
+        isTouchRef.current = true;
+        gsap.set(thumbnail, { scale: 0 });
+      } else {
+        isTouchRef.current = false;
+      }
+    };
+
+    const handleWindowTouch = () => {
+      isTouchRef.current = true;
+      if (thumbnail) {
+        gsap.to(thumbnail, {
+          scale: 0,
+          duration: 0.2,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      }
+    };
+
     trigger.addEventListener("mouseenter", handleMouseEnter);
     trigger.addEventListener("mousemove", handleMouseMove);
     trigger.addEventListener("mouseleave", handleMouseLeave);
+    trigger.addEventListener("touchstart", handleTouchStart, { passive: true });
+    trigger.addEventListener("pointerdown", handlePointerDown, { passive: true });
+    window.addEventListener("touchstart", handleWindowTouch, { passive: true });
+    window.addEventListener("touchend", handleWindowTouch, { passive: true });
 
     return () => {
       trigger.removeEventListener("mouseenter", handleMouseEnter);
       trigger.removeEventListener("mousemove", handleMouseMove);
       trigger.removeEventListener("mouseleave", handleMouseLeave);
+      trigger.removeEventListener("touchstart", handleTouchStart);
+      trigger.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("touchstart", handleWindowTouch);
+      window.removeEventListener("touchend", handleWindowTouch);
     };
   }, [mounted]);
 
   const thumbnailElement = (
     <div
       ref={thumbnailRef}
-      className="pointer-events-none fixed top-0 left-0 z-[99999] select-none overflow-hidden rounded-2xl border border-black/15 bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.3)] ring-1 ring-black/5"
+      className="pointer-events-none fixed top-0 left-0 z-[99999] hidden select-none overflow-hidden rounded-2xl border border-black/15 bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.3)] ring-1 ring-black/5 md:block"
       style={{ width: CARD_WIDTH, height: CARD_HEIGHT }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}

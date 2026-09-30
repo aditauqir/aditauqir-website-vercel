@@ -291,14 +291,14 @@ export default function HomePage() {
           <section className="flex-1 px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-[7rem] xl:px-16">
             <div className="mx-auto flex w-full max-w-[34rem] flex-col gap-6 lg:gap-8">
               <div className="space-y-5">
-                <div className="flex items-center justify-between gap-3 sm:gap-8">
+                <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
                   <h1
                     className={cn(
                       redaction10.className,
-                      "text-[clamp(1.75rem,5.5vw,3.6rem)] leading-[0.92] font-normal text-neutral-950",
+                      "text-[2.75rem] leading-[0.98] font-normal text-neutral-950 text-left sm:text-[clamp(1.75rem,5.5vw,3.6rem)] sm:leading-[0.92]",
                     )}
                   >
-                    <span>hi, i&apos;m </span>
+                    <span className="block sm:inline">hi, i&apos;m </span>
                     <PointerHighlight
                       rectangleClassName="border-black"
                       pointerClassName="text-black"
