@@ -98,11 +98,18 @@
 html {
   min-height: 100%;
   min-height: 100dvh;
-  min-height: -webkit-fill-available;
-  background-image: url("/site-bg.jpg");
-  background-position: center top;
-  background-size: cover;
+  background-color: #a8b4ce;
+  background-image: linear-gradient(
+    to bottom,
+    #a8b4ce 0%,
+    #b8b8c8 25%,
+    #cfbfc5 50%,
+    #9b8286 75%,
+    #654747 100%
+  );
+  background-attachment: fixed;
   background-repeat: no-repeat;
+  background-size: cover;
   color: var(--foreground);
   scroll-behavior: auto;
   transition-timing-function: cubic-bezier(0, 0, 0.58, 1);
@@ -112,12 +119,7 @@ body {
   margin: 0;
   min-height: 100%;
   min-height: 100dvh;
-  min-height: -webkit-fill-available;
   background-color: transparent;
-  background-image: url("/site-bg.jpg");
-  background-position: center top;
-  background-size: cover;
-  background-repeat: no-repeat;
   color: var(--foreground);
   font-family: var(--font-general-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
