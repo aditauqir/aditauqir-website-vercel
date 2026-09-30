@@ -231,14 +231,14 @@ export default function HomePage() {
         {/* Full-bleed lavender sunset background */}
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed -top-[5vh] -bottom-[5vh] -left-[1vw] -right-[1vw] z-0 h-[110dvh] w-[102vw] select-none overflow-hidden"
+          className="pointer-events-none fixed top-0 left-0 right-0 -bottom-[20vh] z-0 h-[120dvh] w-full select-none overflow-hidden bg-[#cfbfc5]"
         >
           {/* Base sharp background */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/site-bg.jpg"
             alt=""
-            className="h-full w-full object-cover object-center"
+            className="h-full w-full object-cover object-top"
           />
 
           {/* Soft atmospheric background blur around text when in lower 50% of viewport */}
@@ -266,7 +266,7 @@ export default function HomePage() {
               <img
                 src="/site-bg.jpg"
                 alt=""
-                className="h-full w-full object-cover object-center scale-[1.03]"
+                className="h-full w-full object-cover object-top scale-[1.03]"
                 style={{
                   filter: "blur(18px)",
                   WebkitFilter: "blur(18px)",
@@ -285,7 +285,7 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 flex min-h-screen min-h-[100dvh] flex-1 flex-col transition-all duration-200">
-          <section className="flex-1 px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-8 sm:px-8 sm:py-10 lg:px-12 lg:py-[7rem] xl:px-16">
+          <section className="flex-1 px-5 pt-[calc(env(safe-area-inset-top)+2.5rem)] pb-12 sm:px-8 sm:py-12 lg:px-12 lg:py-[7rem] xl:px-16">
             <div className="mx-auto flex w-full max-w-[34rem] flex-col gap-6 lg:gap-8">
               <div className="space-y-5">
                 <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
@@ -576,7 +576,7 @@ export default function HomePage() {
           </div>
         </section>
 
-          <footer className="relative mt-auto w-full px-6 pt-8 pb-[max(2rem,calc(env(safe-area-inset-bottom)+1.5rem))] sm:px-8 sm:py-10 lg:px-12 lg:py-12 xl:px-16">
+          <footer className="relative mt-auto w-full px-6 pt-10 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] sm:px-8 sm:pt-12 sm:pb-12 lg:px-12 lg:py-12 xl:px-16">
             <div className="mx-auto flex w-full max-w-[34rem] items-center justify-between text-[0.84rem] text-neutral-800 lg:text-[0.8rem]">
               <p className="font-medium">{`@noor ${currentYear} made in Atlanta, GA`}</p>
               <Button
