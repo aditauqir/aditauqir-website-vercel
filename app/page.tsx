@@ -282,9 +282,6 @@ export default function HomePage() {
               />
             </div>
           </div>
-
-          {/* Gradient atmospheric wash: lighter over dark flowers for effortless readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/18 to-white/35" />
         </div>
 
         <div className="relative z-10 flex min-h-screen min-h-[100dvh] flex-1 flex-col transition-all duration-200">
