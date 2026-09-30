@@ -577,17 +577,17 @@ export default function HomePage() {
         </section>
 
           <footer className="relative mt-auto w-full px-6 pt-10 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] sm:px-8 sm:pt-12 sm:pb-12 lg:px-12 lg:py-12 xl:px-16">
-            <div className="mx-auto flex w-full max-w-[34rem] items-center justify-between text-[0.84rem] text-neutral-800 lg:text-[0.8rem]">
-              <p className="font-medium">{`@noor ${currentYear} made in Atlanta, GA`}</p>
+            <div className="mx-auto flex w-full max-w-[34rem] items-center justify-between text-[0.84rem] text-white lg:text-[0.8rem]">
+              <p className="font-medium text-white">{`@noor ${currentYear} made in Atlanta, GA`}</p>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 aria-label="Back to top"
-                className="size-auto rounded-full border-0 p-0 text-[1rem] text-neutral-800 shadow-none transition-transform hover:scale-110 hover:bg-transparent hover:text-black lg:text-[0.8rem]"
+                className="size-auto rounded-full border-0 p-0 text-[1rem] text-white shadow-none transition-transform hover:scale-110 hover:bg-transparent hover:text-white/80 active:scale-95 lg:text-[0.8rem]"
               >
-                <ArrowUpIcon className="size-[1rem] lg:size-[0.8rem]" />
+                <ArrowUpIcon className="size-[1rem] text-white lg:size-[0.8rem]" />
               </Button>
             </div>
           </footer>
