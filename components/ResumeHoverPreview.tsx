@@ -2,28 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MapPin } from "lucide-react";
 import gsap from "gsap";
+import { Button } from "@/components/ui/button";
 
-const GSU_MAP_EMBED =
-  "https://www.openstreetmap.org/export/embed.html?bbox=-84.3935%2C33.7490%2C-84.3795%2C33.7582&layer=mapnik&marker=33.7535835%2C-84.3864639";
+const CARD_WIDTH = 214;
+const CARD_HEIGHT = 277;
 
-const CARD_WIDTH = 280;
-const CARD_HEIGHT = 215;
-
-interface GsuLocationHoverProps {
-  label?: string;
-}
-
-export default function GsuLocationHover({
-  label = "GaState, atlanta, GA",
-}: GsuLocationHoverProps = {}) {
-  const triggerRef = useRef<HTMLSpanElement>(null);
+export default function ResumeHoverPreview() {
+  const triggerRef = useRef<HTMLDivElement>(null);
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const xToRef = useRef<gsap.QuickToFunc | null>(null);
   const yToRef = useRef<gsap.QuickToFunc | null>(null);
-  const [shouldLoadMap, setShouldLoadMap] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -69,9 +58,6 @@ export default function GsuLocationHover({
     };
 
     const handleMouseEnter = (e: MouseEvent) => {
-      setShouldLoadMap(true);
-      setIsHovered(true);
-
       const halfW = CARD_WIDTH / 2;
       const halfH = CARD_HEIGHT / 2;
       const inset = 16;
@@ -101,7 +87,6 @@ export default function GsuLocationHover({
     };
 
     const handleMouseLeave = () => {
-      setIsHovered(false);
       gsap.to(thumbnail, {
         scale: 0,
         duration: 0.3,
@@ -127,58 +112,27 @@ export default function GsuLocationHover({
       className="pointer-events-none fixed top-0 left-0 z-[99999] select-none overflow-hidden rounded-2xl border border-black/15 bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.3)] ring-1 ring-black/5"
       style={{ width: CARD_WIDTH, height: CARD_HEIGHT }}
     >
-      <div className="relative block h-[8.5rem] w-full overflow-hidden bg-[#e8e8e8]">
-        {shouldLoadMap ? (
-          <iframe
-            title="Georgia State University map"
-            src={GSU_MAP_EMBED}
-            className="pointer-events-none absolute -top-1 -left-11 h-[calc(100%+3rem)] w-[calc(100%+2.75rem)] max-w-none border-0 grayscale-[0.15]"
-            loading="lazy"
-            tabIndex={-1}
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        ) : null}
-      </div>
-
-      <div className="space-y-1 border-t border-black/10 bg-white px-3 py-2.5">
-        <div className="flex items-start gap-1.5 text-[0.78rem] leading-[1.35] font-medium text-black">
-          <MapPin
-            aria-hidden
-            className="mt-[0.15em] size-3 shrink-0"
-            strokeWidth={1.8}
-          />
-          Georgia State University
-        </div>
-        <div className="pl-[1.15rem] text-[0.7rem] leading-[1.4] text-neutral-600">
-          Downtown Atlanta Campus
-          <br />
-          33 Gilmer St SE, Atlanta, GA 30303
-        </div>
-      </div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/resume-preview.png"
+        alt="Resume preview"
+        className="pointer-events-none h-full w-full select-none object-cover object-top"
+      />
     </div>
   );
 
   return (
-    <span ref={triggerRef} className="relative inline-flex items-baseline">
-      <a
-        href="https://www.gsu.edu"
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex items-center gap-[0.18em] text-inherit no-underline"
+    <div ref={triggerRef} className="relative z-30 inline-block">
+      <Button
+        asChild
+        className="h-auto w-fit rounded-full bg-black/90 px-3 py-1.5 text-[0.86rem] font-medium !text-white shadow-sm backdrop-blur-sm transition-transform duration-150 hover:bg-black hover:!text-white active:scale-95 lg:text-[0.81rem]"
       >
-        <span className="underline decoration-black underline-offset-[0.18em]">
-          {label}
-        </span>
-        <MapPin
-          aria-hidden
-          className={`size-[0.95em] translate-y-[-0.05em] transition-colors duration-150 ease-in-out ${
-            isHovered ? "text-black" : "text-muted-foreground"
-          }`}
-          strokeWidth={1.75}
-        />
-      </a>
+        <a href="/resume.pdf" download>
+          resume
+        </a>
+      </Button>
 
       {mounted ? createPortal(thumbnailElement, document.body) : null}
-    </span>
+    </div>
   );
 }

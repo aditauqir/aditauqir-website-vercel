@@ -10,11 +10,10 @@ import {
   GlobeIcon,
 } from "lucide-react";
 
-import { BrandOrbs } from "@/components/brand-orbs/BrandOrbs";
+import AdiNoorHover from "@/components/AdiNoorHover";
 import GsuLocationHover from "@/components/GsuLocationHover";
 import HomeClock from "@/components/HomeClock";
-import HomeSplash from "@/components/HomeSplash";
-import { LiquidMetalButton } from "@/components/liquid-metal-button/LiquidMetalButton";
+import ResumeHoverPreview from "@/components/ResumeHoverPreview";
 import {
   Accordion,
   AccordionContent,
@@ -25,17 +24,56 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PointerHighlight } from "@/components/ui/pointer-highlight";
 import { cn } from "@/lib/utils";
+import { redaction10 } from "./fonts";
+
+function GithubPixelIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 12 12"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M0 0h12v12H0z" fill="none" />
+      <path
+        fill="currentColor"
+        d="M2 12h2v-1H3v-1H2V9H1V8h1v1h1v1h1V9h1V8H3V7H2V4h1V2h1v1h3V2h1v2h1v3H8v1H6v1h1v3h2v-1h1v-1h1V3h-1V2H9V1H2v1H1v1H0v7h1v1h1Zm0 0"
+      />
+    </svg>
+  );
+}
+
+function LinkedinPixelIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M0 0h24v24H0z" fill="none" />
+      <path
+        fill="currentColor"
+        d="M20 22H4v-2h16zM4 20H2V4h2zm18 0h-2V4h2zM9 17H7v-6h2zm6-6v2h-2v4h-2v-6zm2 6h-2v-4h2zM9 9H7V7h2zm11-5H4V2h16z"
+      />
+    </svg>
+  );
+}
 
 const socialLinks = [
   {
     label: "GitHub",
     href: "https://github.com/aditauqir",
-    variant: "github" as const,
+    icon: GithubPixelIcon,
   },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/aditauqir/",
-    variant: "linkedin" as const,
+    icon: LinkedinPixelIcon,
   },
 ];
 
@@ -49,8 +87,15 @@ const projectItems = [
     siteHref: "https://www.zirn.app/",
   },
   {
+    value: "kaiko",
+    label: "kaiko",
+    description:
+      "an autonomous, psychometrically-calibrated adaptive learning companion for obsidian. it pairs a local agent control plane with a rasch 1pl item response theory engine to run computerized adaptive diagnostics, estimate latent ability (θ), and scaffold structured markdown instruction directly into your vault.",
+    githubHref: "https://github.com/aditauqir/kaiko",
+  },
+  {
     value: "fyp",
-    label: "fyp",
+    label: "fyoutubepremium",
     description:
       "an orion browser extension for iphone that loads desktop youtube and restyles it into a phone-friendly player with background playback and screen-off audio. ublock origin handles ads, so it gets closer to youtube premium without the subscription.",
     githubHref: "https://github.com/aditauqir/fyp",
@@ -78,7 +123,6 @@ const projectItems = [
   },
 ];
 
-const zirnSiteHref = "https://www.zirn.app/";
 const fypGithubHref = "https://github.com/aditauqir/fyp";
 
 const howIBuildItems = [
@@ -114,9 +158,20 @@ const stackItems = [
   "github actions",
 ];
 
+const currentYear = new Date().getFullYear();
+
 export default function HomePage() {
   const [copiedProject, setCopiedProject] = useState<string | null>(null);
+  const [activeAccordion, setActiveAccordion] = useState<string>("zirn");
   const copyTimeoutRef = useRef<number | null>(null);
+
+  const jumpToProject = (value: string) => {
+    setActiveAccordion(value);
+    const element = document.getElementById(`project-${value}`);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
 
   const copyText = async (text: string) => {
     const textarea = document.createElement("textarea");
@@ -172,153 +227,256 @@ export default function HomePage() {
 
   return (
     <>
-      <HomeSplash />
-      <main className="flex min-h-screen flex-col bg-background text-foreground">
-        <div className="flex min-h-screen flex-1 flex-col transition-all duration-200">
-          <section className="flex-1 px-6 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-[7rem] xl:px-16">
+      <main className="relative flex min-h-screen flex-col bg-transparent text-neutral-900">
+        {/* Full-bleed lavender sunset background */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-0 select-none overflow-hidden"
+        >
+          {/* Base sharp background */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/site-bg.jpg"
+            alt=""
+            className="h-full w-full object-cover object-center"
+          />
+
+          {/* Soft atmospheric background blur around text when in lower 50% of viewport */}
+          <div
+            className="absolute inset-0 overflow-hidden"
+            style={{
+              maskImage:
+                "linear-gradient(to bottom, transparent 0%, transparent 42%, black 52%, black 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent 0%, transparent 42%, black 52%, black 100%)",
+            }}
+          >
+            {/* Horizontal mask centered around the text column */}
+            <div
+              className="absolute inset-0 overflow-hidden"
+              style={{
+                maskImage:
+                  "radial-gradient(ellipse 26rem 100% at 50% 50%, black 50%, transparent 100%)",
+                WebkitMaskImage:
+                  "radial-gradient(ellipse 26rem 100% at 50% 50%, black 50%, transparent 100%)",
+              }}
+            >
+              {/* Blurred background image layer, pixel-aligned with base image */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/site-bg.jpg"
+                alt=""
+                className="h-full w-full object-cover object-center scale-[1.03]"
+                style={{
+                  filter: "blur(18px)",
+                  WebkitFilter: "blur(18px)",
+                }}
+              />
+              {/* Subtle glass luminescence around text column */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(ellipse 22rem 100% at 50% 50%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 75%, transparent 100%)",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Gradient atmospheric wash: lighter over dark flowers for effortless readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/18 to-white/35" />
+        </div>
+
+        <div className="relative z-10 flex min-h-screen flex-1 flex-col transition-all duration-200">
+          <section className="flex-1 px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-[7rem] xl:px-16">
             <div className="mx-auto flex w-full max-w-[34rem] flex-col gap-6 lg:gap-8">
-              <div className="flex items-start justify-between gap-8">
-                <div className="space-y-5">
-                  <h1 className="text-[clamp(2rem,5.8vw,3.6rem)] leading-[0.92] font-normal tracking-[-0.08em]">
+              <div className="space-y-5">
+                <div className="flex items-center justify-between gap-3 sm:gap-8">
+                  <h1
+                    className={cn(
+                      redaction10.className,
+                      "text-[clamp(1.75rem,5.5vw,3.6rem)] leading-[0.92] font-normal text-neutral-950",
+                    )}
+                  >
                     <span>hi, i&apos;m </span>
                     <PointerHighlight
                       rectangleClassName="border-black"
                       pointerClassName="text-black"
-                      containerClassName="inline-flex align-baseline"
+                      containerClassName="inline-flex align-baseline overflow-visible"
                     >
-                      <span className="relative z-10 inline-block px-1">
-                        Adi
-                      </span>
+                      <AdiNoorHover />
                     </PointerHighlight>
-                    <sup className="ml-1 align-super text-[0.38em] font-normal tracking-[-0.04em] text-[rgb(153,151,151)]">
-                      aka. &quot;Noor&quot;
-                    </sup>
                   </h1>
-                  <HomeClock />
+
+                  <div className="flex shrink-0 items-center gap-3.5">
+                    {socialLinks.map((socialLink) => {
+                      const Icon = socialLink.icon;
+                      return (
+                        <Link
+                          key={socialLink.label}
+                          href={socialLink.href}
+                          aria-label={socialLink.label}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center justify-center text-neutral-900 transition-all duration-200 hover:scale-110 hover:text-black hover:opacity-70"
+                        >
+                          <Icon className="size-7 shrink-0" />
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-3 pt-1">
-                  {socialLinks.map((socialLink) => (
-                    <BrandOrbs
-                      key={socialLink.label}
-                      variant={socialLink.variant}
-                      size="medium"
-                      mode="light"
-                      href={socialLink.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={socialLink.label}
-                    />
-                  ))}
-                </div>
+                <HomeClock />
               </div>
 
-              <div className="w-full space-y-8 text-[0.86rem] leading-[1.6] tracking-[-0.05em] lg:text-[0.81rem]">
-                <Button
-                  asChild
-                  className="h-auto w-fit rounded-full bg-black px-3 py-1.5 text-[0.86rem] font-medium tracking-[-0.05em] !text-white hover:bg-[rgb(35,35,35)] hover:!text-white lg:text-[0.81rem]"
-                >
-                  <a href="/resume.pdf" download>
-                    resume
-                  </a>
-                </Button>
-                <div className="flex w-full items-start justify-between gap-4 py-2">
-                  <div className="w-fit space-y-2">
-                    <p className="text-[0.76rem] leading-[1.4] tracking-[-0.05em] text-muted-foreground">
-                      A startup im working on
-                    </p>
-                    <LiquidMetalButton
-                      variant="pill"
-                      text="zirn.app"
-                      href={zirnSiteHref}
-                      target="_blank"
-                      rel="noreferrer"
-                      showIcon={false}
-                      height={40}
-                    />
-                  </div>
-                  <div className="w-fit space-y-2 text-right">
-                    <p className="text-[0.76rem] leading-[1.4] tracking-[-0.05em] text-muted-foreground">
-                      A passion project im working on:
-                    </p>
-                    <div className="flex justify-end">
-                      <LiquidMetalButton
-                        variant="pill"
-                        text="FYP"
-                        href={fypGithubHref}
-                        target="_blank"
-                        rel="noreferrer"
-                        showIcon={false}
-                        height={40}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <p className="relative z-[100]">
-                  i&apos;m a computer science student pursuing B.S./M.S. at{" "}
-                  <GsuLocationHover />
-                </p>
+              <div className="w-full space-y-8 text-[0.86rem] leading-[1.6] text-neutral-900 lg:text-[0.81rem]">
+                <ResumeHoverPreview />
                 <p>
-                  i like building things that feel useful, sharp, and a little
-                  unfair.
+                  software engineer, designer, and ai systems builder pursuing a
+                  b.s./m.s. at{" "}
+                  <span className="whitespace-nowrap">
+                    <GsuLocationHover />.
+                  </span>
                 </p>
 
-                <div className="space-y-3">
-                  <p>right now i&apos;m interested in:</p>
-                  <ul className="space-y-1 pl-5">
-                    <li>local-first tools for keeping context around</li>
-                    <li>turning messy information into something reusable</li>
-                    <li>macroeconomic forecasting</li>
-                    <li>ai systems that are useful</li>
-                    <li>software that actually does something</li>
-                  </ul>
+                <p>
+                  i don&apos;t build demos that just look intelligent—i build
+                  software that grants real leverage: local-first knowledge
+                  workspaces (
+                  <a
+                    href="#project-zirn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      jumpToProject("zirn");
+                    }}
+                    className="group cursor-pointer font-medium text-neutral-950"
+                  >
+                    <span className="underline decoration-neutral-700 decoration-dashed underline-offset-[3px] transition-colors group-hover:text-black group-hover:decoration-black">
+                      zirn
+                    </span>
+                  </a>
+                  ), autonomous adaptive learning agents (
+                  <a
+                    href="#project-kaiko"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      jumpToProject("kaiko");
+                    }}
+                    className="group cursor-pointer font-medium text-neutral-950"
+                  >
+                    <span className="underline decoration-neutral-700 decoration-dashed underline-offset-[3px] transition-colors group-hover:text-black group-hover:decoration-black">
+                      kaiko
+                    </span>
+                  </a>
+                  ), and custom browser runtimes for unfair utility (
+                  <a
+                    href="#project-fyp"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      jumpToProject("fyp");
+                    }}
+                    className="group cursor-pointer font-medium text-neutral-950"
+                  >
+                    <span className="underline decoration-neutral-700 decoration-dashed underline-offset-[3px] transition-colors group-hover:text-black group-hover:decoration-black">
+                      fyoutubepremium
+                    </span>
+                  </a>
+                  ).
+                </p>
+
+                <div className="flex flex-wrap items-center gap-1.5 py-0.5 text-[0.76rem] leading-[1.4]">
+                  <span className="text-neutral-700">
+                    A passion project im working on:
+                  </span>
+                  <a
+                    href={fypGithubHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group inline-flex cursor-pointer items-center gap-1.5 font-medium text-neutral-950"
+                  >
+                    <span className="underline decoration-neutral-700 decoration-dashed underline-offset-[3px] transition-colors group-hover:text-black group-hover:decoration-black">
+                      fyoutubepremium
+                    </span>
+                    <span className="inline-flex items-center gap-0.5 text-[0.74rem] text-neutral-600 transition-colors group-hover:text-black">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="1em"
+                        height="1em"
+                        viewBox="0 0 1024 1024"
+                        className="size-3.5 fill-current"
+                      >
+                        <path d="M0 0h1024v1024H0z" fill="none" />
+                        <path
+                          fill="currentColor"
+                          d="m908.1 353.1l-253.9-36.9L540.7 86.1c-3.1-6.3-8.2-11.4-14.5-14.5c-15.8-7.8-35-1.3-42.9 14.5L369.8 316.2l-253.9 36.9c-7 1-13.4 4.3-18.3 9.3a32.05 32.05 0 0 0 .6 45.3l183.7 179.1l-43.4 252.9a31.95 31.95 0 0 0 46.4 33.7L512 754l227.1 119.4c6.2 3.3 13.4 4.4 20.3 3.2c17.4-3 29.1-19.5 26.1-36.9l-43.4-252.9l183.7-179.1c5-4.9 8.3-11.3 9.3-18.3c2.7-17.5-9.5-33.7-27-36.3M664.8 561.6l36.1 210.3L512 672.7L323.1 772l36.1-210.3l-152.8-149L417.6 382L512 190.7L606.4 382l211.2 30.7z"
+                        />
+                      </svg>
+                      <span>21 stars</span>
+                    </span>
+                  </a>
                 </div>
 
-                <div className="space-y-3">
-                  <p className="font-semibold tracking-[-0.08em]">
-                    A FEW THINGS:
-                  </p>
-                  <ul className="space-y-1 pl-5">
-                    <li>
-                      built awry, a recession prediction system using
-                      macroeconomic data
-                    </li>
-                    <li>
-                      building zirn, a local-first ai workspace for compiling
-                      messy information into reusable markdown knowledge
-                    </li>
-                    <li>trained an ensemble model with 99%+ auroc</li>
-                    <li>
-                      building full-stack + ai systems with python, c/c++, and
-                      typescript
-                    </li>
-                    <li>shipping projects fast, iterating faster</li>
-                  </ul>
-                </div>
+                <p className="text-neutral-950">
+                  zero slop. beautiful software.
+                </p>
+
+                <div className="space-y-8">
+                  <div className="space-y-3">
+                    <p className="font-semibold text-neutral-950">
+                      A FEW THINGS:
+                    </p>
+                    <ul className="space-y-1.5 pl-5 text-neutral-800">
+                      <li>
+                        built zirn, a local-first ai workspace for compiling
+                        messy information into reusable markdown knowledge
+                      </li>
+                      <li>
+                        built kaiko, an autonomous psychometric learning
+                        companion pairing local agent control planes with item
+                        response theory for obsidian
+                      </li>
+                      <li>
+                        building fyoutubepremium, an ios browser extension
+                        delivering ad-free background playback and screen-off
+                        audio
+                      </li>
+                      <li>
+                        built awry, a recession prediction system using
+                        macroeconomic data
+                      </li>
+                      <li>
+                        building full-stack + ai systems with python, c/c++, and
+                        typescript
+                      </li>
+                      <li>shipping projects fast, iterating faster</li>
+                    </ul>
+                  </div>
 
                 <div className="space-y-3">
-                  <p className="font-semibold tracking-[-0.08em]">
+                  <p className="font-semibold">
                     SOME THINGS I&apos;M WORKING ON:
                   </p>
                   <Accordion
                     type="single"
                     collapsible
-                    defaultValue="zirn"
+                    value={activeAccordion}
+                    onValueChange={(val) => setActiveAccordion(val || "")}
                     className="w-full"
                   >
                     {projectItems.map((projectItem) => (
                       <AccordionItem
+                        id={`project-${projectItem.value}`}
                         key={projectItem.value}
                         value={projectItem.value}
                         className={cn(
-                          "border-border-subtle",
+                          "border-black/15 scroll-mt-24 transition-colors",
                           projectItem.featured && "border-black",
                         )}
                       >
                         <AccordionTrigger
                           className={cn(
-                            "py-3 text-[0.86rem] tracking-[-0.06em] lg:text-[0.81rem]",
+                            "py-3 text-[0.86rem] text-neutral-950 lg:text-[0.81rem]",
                             projectItem.featured && "font-semibold text-black",
                           )}
                         >
@@ -326,8 +484,8 @@ export default function HomePage() {
                         </AccordionTrigger>
                         <AccordionContent
                           className={cn(
-                            "space-y-3 text-[0.8rem] leading-[1.55] tracking-[-0.05em] text-muted-foreground lg:text-[0.76rem]",
-                            projectItem.featured && "text-[rgb(55,55,55)]",
+                            "space-y-3 text-[0.8rem] leading-[1.55] text-neutral-800 lg:text-[0.76rem]",
+                            projectItem.featured && "text-neutral-900",
                           )}
                         >
                           <p>{projectItem.description}</p>
@@ -336,7 +494,7 @@ export default function HomePage() {
                               href={projectItem.siteHref}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-black underline decoration-black underline-offset-2"
+                              className="inline-flex items-center gap-1 font-medium text-black underline decoration-black underline-offset-2"
                             >
                               zirn.app
                               <ArrowUpRight
@@ -347,12 +505,12 @@ export default function HomePage() {
                             </a>
                           ) : null}
                           {projectItem.githubHref ? (
-                            <div className="flex max-w-full items-center overflow-hidden rounded-lg border border-[rgb(185,190,188)] bg-[#f2f5f4] px-2">
+                            <div className="flex max-w-full items-center overflow-hidden rounded-lg border border-black/15 bg-white/70 px-2 shadow-xs backdrop-blur-md">
                               <Input
                                 readOnly
                                 value={`git clone ${projectItem.githubHref}`}
                                 aria-label={`${projectItem.label} git command`}
-                                className="h-8 min-w-0 flex-1 border-0 bg-transparent px-0 text-[0.76rem] tracking-[-0.05em] text-[rgb(45,45,45)] shadow-none selection:bg-black/10 selection:text-black focus-visible:ring-0 lg:text-[0.72rem]"
+                                className="h-8 min-w-0 flex-1 border-0 bg-transparent px-0 text-[0.76rem] text-neutral-900 shadow-none selection:bg-black/10 selection:text-black focus-visible:ring-0 lg:text-[0.72rem]"
                               />
                               <Button
                                 type="button"
@@ -363,7 +521,7 @@ export default function HomePage() {
                                   )
                                 }
                                 aria-label={`Copy ${projectItem.label} git command`}
-                                className="size-7 shrink-0 rounded-md bg-transparent p-0 text-[rgb(85,85,85)] shadow-none hover:bg-[rgb(220,225,223)] hover:text-black"
+                                className="size-7 shrink-0 rounded-md bg-transparent p-0 text-neutral-700 shadow-none hover:bg-black/10 hover:text-black"
                               >
                                 {copiedProject === projectItem.value ? (
                                   <CheckIcon className="size-3.5" />
@@ -376,7 +534,7 @@ export default function HomePage() {
                                 target="_blank"
                                 rel="noreferrer"
                                 aria-label={`Open ${projectItem.label} GitHub`}
-                                className="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-transparent p-0 text-[rgb(85,85,85)] no-underline shadow-none transition-all hover:bg-[rgb(220,225,223)] hover:text-black"
+                                className="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-transparent p-0 text-neutral-700 no-underline shadow-none transition-all hover:bg-black/10 hover:text-black"
                               >
                                 <GlobeIcon className="size-3.5" />
                               </Link>
@@ -389,19 +547,19 @@ export default function HomePage() {
                 </div>
 
                 <div className="space-y-3">
-                  <p className="font-semibold tracking-[-0.08em]">
+                  <p className="font-semibold text-neutral-950">
                     HOW I BUILD:
                   </p>
-                  <ul className="space-y-1 pl-5">
+                  <ul className="space-y-1 pl-5 text-neutral-800">
                     {howIBuildItems.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
-                  <p>
+                  <p className="text-neutral-800">
                     i&apos;m not particularly interested in building demos that
                     look intelligent.
                   </p>
-                  <p>
+                  <p className="text-neutral-800">
                     i want to build software that remembers, predicts,
                     automates, or gives someone leverage they didn&apos;t have
                     before.
@@ -409,8 +567,8 @@ export default function HomePage() {
                 </div>
 
                 <div className="space-y-3">
-                  <p className="font-semibold tracking-[-0.08em]">STACK:</p>
-                  <ul className="space-y-1 pl-5">
+                  <p className="font-semibold text-neutral-950">STACK:</p>
+                  <ul className="space-y-1 pl-5 text-neutral-800">
                     {stackItems.map((stackItem) => (
                       <li key={stackItem}>{stackItem}</li>
                     ))}
@@ -418,18 +576,19 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <footer className="border-t border-[rgb(130,130,130)] px-6 py-4 text-[1rem] tracking-[-0.08em] sm:px-8 lg:px-12 lg:py-6 lg:text-[0.8rem] xl:px-16">
-            <div className="mx-auto flex w-full max-w-[34rem] items-center justify-between">
-              <p>@noor</p>
+          <footer className="relative mt-auto w-full px-6 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12 xl:px-16">
+            <div className="mx-auto flex w-full max-w-[34rem] items-center justify-between text-[0.84rem] text-neutral-800 lg:text-[0.8rem]">
+              <p className="font-medium">{`@noor ${currentYear} made in Atlanta, GA`}</p>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 aria-label="Back to top"
-                className="size-auto rounded-full border-0 p-0 text-[1rem] shadow-none hover:bg-transparent hover:text-[rgb(90,90,90)] lg:text-[0.8rem]"
+                className="size-auto rounded-full border-0 p-0 text-[1rem] text-neutral-800 shadow-none transition-transform hover:scale-110 hover:bg-transparent hover:text-black lg:text-[0.8rem]"
               >
                 <ArrowUpIcon className="size-[1rem] lg:size-[0.8rem]" />
               </Button>

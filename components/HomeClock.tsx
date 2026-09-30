@@ -32,7 +32,7 @@ export default function HomeClock() {
 
   return (
     <p
-      className="font-mono text-[0.87rem] font-[311] tracking-[0.08em] text-[rgb(153,151,151)] uppercase lg:text-[0.78rem]"
+      className="font-mono text-[0.87rem] font-normal text-neutral-700 uppercase lg:text-[0.78rem] tracking-wider"
       suppressHydrationWarning
     >
       {time || "Atlanta time"}

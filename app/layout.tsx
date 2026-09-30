@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Source_Code_Pro, Trispace } from "next/font/google";
+import { Source_Code_Pro } from "next/font/google";
 
+import { generalSans, redaction10 } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Adi Tauqir",
   description: "Personal portfolio",
 };
-
-const trispace = Trispace({
-  subsets: ["latin"],
-  variable: "--font-trispace",
-});
 
 const sourceCode = Source_Code_Pro({
   subsets: ["latin"],
@@ -24,8 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${trispace.variable} ${sourceCode.variable}`}>
-      <body>{children}</body>
+    <html
+      lang="en"
+      className={`${generalSans.variable} ${sourceCode.variable} ${redaction10.variable}`}
+    >
+      <body className={generalSans.className}>{children}</body>
     </html>
   );
 }

@@ -7,6 +7,11 @@ export type ProjectItem =
 
 export const PROJECTS: ProjectItem[] = [
     {
+        github_url: "https://github.com/aditauqir/kaiko",
+        title: "Kaiko",
+        description: "Autonomous, psychometrically-calibrated adaptive learning companion for Obsidian integrating a local Pi agent daemon with a Rasch 1PL IRT engine."
+    },
+    {
         github_url: "https://github.com/aditauqir/Zaman",
         title: "Zaman",
         description: "Terminal-based progress dashboard CLI built in Python with secure JSON-backed auth, SHA-256 password hashing, and modular UI components."
