@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpIcon,
@@ -163,7 +163,34 @@ const currentYear = new Date().getFullYear();
 export default function HomePage() {
   const [copiedProject, setCopiedProject] = useState<string | null>(null);
   const [activeAccordion, setActiveAccordion] = useState<string>("zirn");
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
   const copyTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const detectMobile = () => {
+      if (typeof window === "undefined") return;
+      const isTouch =
+        window.matchMedia("(hover: none), (pointer: coarse)").matches ||
+        (typeof navigator !== "undefined" && navigator.maxTouchPoints > 0);
+      const isNarrowViewport = window.innerWidth < 768;
+      const isMobileUA =
+        typeof navigator !== "undefined" &&
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        );
+
+      setIsMobileDevice(isNarrowViewport || (isTouch && isMobileUA));
+    };
+
+    detectMobile();
+    window.addEventListener("resize", detectMobile);
+    window.addEventListener("orientationchange", detectMobile);
+
+    return () => {
+      window.removeEventListener("resize", detectMobile);
+      window.removeEventListener("orientationchange", detectMobile);
+    };
+  }, []);
 
   const jumpToProject = (value: string) => {
     setActiveAccordion(value);
@@ -231,19 +258,25 @@ export default function HomePage() {
         {/* Full-bleed lavender sunset background */}
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed -top-[10vh] -bottom-[10vh] -left-[2vw] -right-[2vw] z-0 select-none overflow-hidden"
+          className="pointer-events-none fixed -top-[10vh] -bottom-[10vh] -left-[2vw] -right-[2vw] z-0 select-none overflow-hidden bg-white"
         >
           {/* Base sharp background */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/site-bg.jpg"
             alt=""
-            className="h-full w-full object-cover object-center"
+            className={cn(
+              "h-full w-full object-cover object-center transition-opacity duration-300",
+              isMobileDevice ? "opacity-65" : "opacity-65 sm:opacity-100",
+            )}
           />
 
           {/* Soft atmospheric background blur around text when in lower 50% of viewport */}
           <div
-            className="absolute inset-0 overflow-hidden"
+            className={cn(
+              "absolute inset-0 overflow-hidden transition-opacity duration-300",
+              isMobileDevice ? "opacity-75" : "opacity-75 sm:opacity-100",
+            )}
             style={{
               maskImage:
                 "linear-gradient(to bottom, transparent 0%, transparent 42%, black 52%, black 100%)",
@@ -282,6 +315,16 @@ export default function HomePage() {
               />
             </div>
           </div>
+
+          {/* Mobile-only white translucent wash overlay: makes background whiter with clean transparency ONLY on mobile */}
+          <div
+            className={cn(
+              "pointer-events-none absolute inset-0 transition-opacity duration-300",
+              isMobileDevice
+                ? "bg-gradient-to-b from-white/30 via-white/40 to-white/55 opacity-100"
+                : "bg-gradient-to-b from-white/30 via-white/40 to-white/55 sm:hidden",
+            )}
+          />
         </div>
 
         <div className="relative z-10 flex min-h-screen min-h-[100dvh] flex-1 flex-col transition-all duration-200">
@@ -577,17 +620,17 @@ export default function HomePage() {
         </section>
 
           <footer className="relative mt-auto w-full px-6 pt-10 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] sm:px-8 sm:pt-12 sm:pb-12 lg:px-12 lg:py-12 xl:px-16">
-            <div className="mx-auto flex w-full max-w-[34rem] items-center justify-between text-[0.84rem] text-neutral-900 sm:text-white lg:text-[0.8rem]">
-              <p className="font-medium text-neutral-900 sm:text-white">{`@noor ${currentYear} made in Atlanta, GA`}</p>
+            <div className="mx-auto flex w-full max-w-[34rem] items-center justify-between text-[0.84rem] text-black lg:text-[0.8rem]">
+              <p className="font-medium text-black">{`@noor ${currentYear} made in Atlanta, GA`}</p>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 aria-label="Back to top"
-                className="size-auto rounded-full border-0 p-0 text-[1rem] text-neutral-900 shadow-none transition-transform hover:scale-110 hover:bg-transparent hover:text-black sm:text-white sm:hover:text-white/80 active:scale-95 lg:text-[0.8rem]"
+                className="size-auto rounded-full border-0 p-0 text-[1rem] text-black shadow-none transition-transform hover:scale-110 hover:bg-transparent hover:text-black/70 active:scale-95 lg:text-[0.8rem]"
               >
-                <ArrowUpIcon className="size-[1rem] lg:size-[0.8rem]" />
+                <ArrowUpIcon className="size-[1rem] text-black lg:size-[0.8rem]" />
               </Button>
             </div>
           </footer>
